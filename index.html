@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101827">
+  <title>SNs Security</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #101827;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .card {
+      max-width: 420px;
+      margin: 50px auto;
+      padding: 24px;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      background: #1e293b;
+    }
+    h1 { color: #38bdf8; text-align: center; }
+    p { color: #cbd5e1; text-align: center; }
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 10px;
+      background: #0284c7;
+      color: white;
+      font-size: 16px;
+    }
+    #status { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>SNs Security</h1>
+    <p>आपकी निजी सुरक्षा के लिए</p>
+    <button onclick="showStatus('SNs Security में आपका स्वागत है।')">
+      शुरू करें
+    </button>
+    <p id="status">यह ऐप का शुरुआती नमूना है।</p>
+  </div>
+  <script>
+    function showStatus(message) {
+      document.getElementById('status').textContent = message;
+    }
+  </script>
+</body>
+</html>
