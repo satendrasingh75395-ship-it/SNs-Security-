@@ -1,56 +1,221 @@
-
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SNs Security</title>
-<style>
-body{margin:0;background:#101827;color:white;font-family:Arial,sans-serif;padding:20px}
-.card{max-width:420px;margin:50px auto;background:#1e293b;padding:24px;border-radius:20px;text-align:center}
-h1{color:#38bdf8}
-input,button{width:100%;padding:14px;margin-top:14px;box-sizing:border-box;border-radius:10px;font-size:16px}
-input{background:#0f172a;color:white;border:1px solid #475569}
-button{background:#0284c7;color:white;border:0}
-.note{color:#cbd5e1;font-size:14px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNs Security</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0d131f; color: #ffffff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background-color: #1a2232; border: 1px solid #2b3548; border-radius: 18px; padding: 35px 25px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        h1 { color: #249cf2; font-size: 30px; margin-bottom: 10px; }
+        h2 { color: #249cf2; font-size: 22px; margin-bottom: 15px; }
+        p { color: #b8c4d9; font-size: 15px; margin-bottom: 22px; }
+        .btn { background-color: #0b84dc; color: white; border: none; padding: 14px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px; transition: 0.2s; }
+        .btn:hover { background-color: #096ab3; }
+        .btn-danger { background-color: #e63946; margin-top: 10px; }
+        .btn-secondary { background-color: #2b3548; }
+        input { width: 100%; padding: 13px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #3a465e; background-color: #0d131f; color: white; font-size: 15px; text-align: center; }
+        .hidden { display: none; }
+        .link { color: #249cf2; font-size: 14px; cursor: pointer; text-decoration: underline; display: inline-block; margin-top: 5px; }
+        .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; max-height: 320px; overflow-y: auto; padding: 5px; }
+        .media-box { position: relative; background: #0d131f; border-radius: 8px; overflow: hidden; border: 1px solid #2b3548; }
+        .media-box img, .media-box video { width: 100%; height: 110px; object-fit: cover; display: block; }
+        .del-btn { position: absolute; top: 5px; right: 5px; background: rgba(230, 57, 70, 0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; }
+        .file-label { display: block; background: #1f2b3e; border: 2px dashed #249cf2; padding: 15px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; color: #b8c4d9; font-weight: bold; }
+    </style>
 </head>
 <body>
-<div class="card">
-<h1>SNs Security</h1>
-<p>आपकी निजी सुरक्षा के लिए</p>
-<section id="welcome">
-<p>आपका स्वागत है</p>
-<button onclick="showLogin()">शुरू करें</button>
-</section>
-<section id="login" hidden>
-<h2>लॉगिन / रजिस्टर</h2>
-<p class="note">अपना मोबाइल नंबर डालें। यह अभी डेमो स्क्रीन है।</p>
-<input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 अंकों का मोबाइल नंबर">
-<button onclick="continueLogin()">आगे बढ़ें</button>
-<button onclick="goBack()">वापस जाएँ</button>
-<p id="message" class="note"></p>
-</section>
-</div>
-<script>
-function showLogin(){
- document.getElementById('welcome').hidden=true;
- document.getElementById('login').hidden=false;
-}
-function goBack(){
- document.getElementById('login').hidden=true;
- document.getElementById('welcome').hidden=false;
-}
-function continueLogin(){
- const phone=document.getElementById('phone').value.trim();
- const message=document.getElementById('message');
- if(!/^[6-9][0-9]{9}$/.test(phone)){
-  message.textContent='कृपया सही 10 अंकों का भारतीय मोबाइल नंबर डालें।';
-  return;
- }
- message.textContent='स्क्रीन तैयार है। असली OTP लॉगिन के लिए Firebase सेटअप करना बाकी है।';
-}
-</script>
+
+    <!-- 1. Welcome Screen -->
+    <div id="welcome-screen" class="card">
+        <h1>SNs Security</h1>
+        <p>आपकी निजी सुरक्षा के लिए</p>
+        <button class="btn" onclick="startApp()">शुरू करें</button>
+        <p style="margin-bottom: 0; font-size: 14px;">SNs Security में आपका स्वागत है।</p>
+    </div>
+
+    <!-- 2. Setup Screen (First Time) -->
+    <div id="setup-screen" class="card hidden">
+        <h2>नया पिन (PIN) बनाएं</h2>
+        <p>अपनी फोटो और वीडियो सुरक्षित करने के लिए पिन सेट करें</p>
+        <input type="password" id="new-pin" placeholder="4-अंकों का पिन डालें" maxlength="4" inputmode="numeric">
+        <input type="text" id="recovery-ans" placeholder="रिकवरी सवाल: आपका पसंदीदा नाम/चीज़?">
+        <button class="btn" onclick="saveSetup()">सेव करें और आगे बढ़ें</button>
+    </div>
+
+    <!-- 3. Login Screen -->
+    <div id="login-screen" class="card hidden">
+        <h2>लॉगिन करें</h2>
+        <p>वॉल्ट खोलने के लिए अपना पिन दर्ज करें</p>
+        <input type="password" id="login-pin" placeholder="अपना पिन डालें" maxlength="4" inputmode="numeric">
+        <button class="btn" onclick="checkLogin()">अनलॉक करें</button>
+        <span class="link" onclick="showScreen('recovery-screen')">पिन भूल गए? (Account Recovery)</span>
+    </div>
+
+    <!-- 4. Account Recovery Screen -->
+    <div id="recovery-screen" class="card hidden">
+        <h2>अकाउंट रिकवरी</h2>
+        <p>अपना सीक्रेट जवाब डालकर नया पिन बनाएं</p>
+        <input type="text" id="verify-ans" placeholder="आपका सीक्रेट जवाब क्या था?">
+        <input type="password" id="reset-pin" placeholder="नया 4-अंकों का पिन डालें" maxlength="4" inputmode="numeric">
+        <button class="btn" onclick="recoverAccount()">पिन रीसेट करें</button>
+        <button class="btn btn-secondary" onclick="showScreen('login-screen')">वापस जाएं</button>
+    </div>
+
+    <!-- 5. Private Vault Screen -->
+    <div id="vault-screen" class="card hidden">
+        <h2>🔒 प्राइवेट वॉल्ट</h2>
+        <p>आपकी सुरक्षित फोटो और वीडियो</p>
+        
+        <label class="file-label">
+            + फोटो / वीडियो जोड़ें
+            <input type="file" id="media-input" accept="image/*,video/*" style="display: none;" onchange="addMedia(event)">
+        </label>
+
+        <div id="gallery" class="gallery"></div>
+
+        <button class="btn btn-danger" onclick="logout()">लॉक करें (Logout)</button>
+    </div>
+
+    <script>
+        let db;
+        const request = indexedDB.open("SNsVaultDB", 1);
+        request.onupgradeneeded = function(e) {
+            db = e.target.result;
+            db.createObjectStore("media", { keyPath: "id", autoIncrement: true });
+        };
+        request.onsuccess = function(e) {
+            db = e.target.result;
+        };
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function startApp() {
+            const savedPin = localStorage.getItem('sns_pin');
+            if (savedPin) {
+                showScreen('login-screen');
+            } else {
+                showScreen('setup-screen');
+            }
+        }
+
+        function saveSetup() {
+            const pin = document.getElementById('new-pin').value.trim();
+            const ans = document.getElementById('recovery-ans').value.trim().toLowerCase();
+            if (pin.length < 4 || !ans) {
+                alert("कृपया 4-अंकों का पिन और रिकवरी जवाब दोनों भरें!");
+                return;
+            }
+            localStorage.setItem('sns_pin', pin);
+            localStorage.setItem('sns_recovery', ans);
+            alert("आपका पिन सफलतापूर्वक सेट हो गया है!");
+            openVault();
+        }
+
+        function checkLogin() {
+            const enteredPin = document.getElementById('login-pin').value.trim();
+            const savedPin = localStorage.getItem('sns_pin');
+            if (enteredPin === savedPin) {
+                document.getElementById('login-pin').value = '';
+                openVault();
+            } else {
+                alert("गलत पिन! कृपया दोबारा प्रयास करें।");
+            }
+        }
+
+        function recoverAccount() {
+            const ans = document.getElementById('verify-ans').value.trim().toLowerCase();
+            const newPin = document.getElementById('reset-pin').value.trim();
+            const savedAns = localStorage.getItem('sns_recovery');
+
+            if (ans === savedAns) {
+                if (newPin.length < 4) {
+                    alert("कृपया कम से कम 4-अंकों का नया पिन डालें।");
+                    return;
+                }
+                localStorage.setItem('sns_pin', newPin);
+                alert("पिन बदल दिया गया है! अब आप लॉगिन कर सकते हैं।");
+                showScreen('login-screen');
+            } else {
+                alert("सीक्रेट जवाब गलत है!");
+            }
+        }
+
+        function openVault() {
+            showScreen('vault-screen');
+            loadMedia();
+        }
+
+        function addMedia(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const transaction = db.transaction(["media"], "readwrite");
+                const store = transaction.objectStore("media");
+                store.add({ type: file.type, data: e.target.result });
+                transaction.oncomplete = function() {
+                    loadMedia();
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadMedia() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+            const transaction = db.transaction(["media"], "readonly");
+            const store = transaction.objectStore("media");
+            store.openCursor().onsuccess = function(e) {
+                const cursor = e.target.result;
+                if (cursor) {
+                    const item = cursor.value;
+                    const box = document.createElement('div');
+                    box.className = 'media-box';
+
+                    let mediaEl;
+                    if (item.type.startsWith('video')) {
+                        mediaEl = document.createElement('video');
+                        mediaEl.src = item.data;
+                        mediaEl.controls = true;
+                    } else {
+                        mediaEl = document.createElement('img');
+                        mediaEl.src = item.data;
+                        mediaEl.onclick = () => {
+                            const w = window.open("");
+                            w.document.write(`<img src="${item.data}" style="width:100%;">`);
+                        };
+                    }
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'del-btn';
+                    delBtn.innerText = '✕';
+                    delBtn.onclick = () => deleteMedia(item.id);
+
+                    box.appendChild(mediaEl);
+                    box.appendChild(delBtn);
+                    gallery.appendChild(box);
+                    cursor.continue();
+                }
+            };
+        }
+
+        function deleteMedia(id) {
+            const transaction = db.transaction(["media"], "readwrite");
+            const store = transaction.objectStore("media");
+            store.delete(id);
+            transaction.oncomplete = function() {
+                loadMedia();
+            };
+        }
+
+        function logout() {
+            showScreen('welcome-screen');
+        }
+    </script>
 </body>
 </html>
